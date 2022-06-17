@@ -3,15 +3,17 @@ package com.example.db_detective.core.manager
 import android.database.Cursor
 import android.util.Log
 import androidx.sqlite.db.SupportSQLiteDatabase
-import androidx.sqlite.db.SupportSQLiteOpenHelper
 import com.example.db_detective.core.exceptions.RecordFetchError
 import com.example.db_detective.core.utils.DBDetectiveConstants
+import com.example.db_detective.model.DBDetectiveTableModel
 
 interface IDBManager {
 
     fun getAllTablesForDb(db: SupportSQLiteDatabase): List<String>
 
     fun getColumnNamesForTable(db: SupportSQLiteDatabase, tableName: String): List<String>
+
+    fun getEntireDataForTable(db: SupportSQLiteDatabase, tableName: String): DBDetectiveTableModel
 
     fun handleCursorActionSafely(
         createCursor: () -> Cursor,

@@ -6,6 +6,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.db_detective.core.exceptions.NoDatabaseFoundForName
 import com.example.db_detective.core.manager.DBManager
 import com.example.db_detective.core.manager.IDBManager
+import com.example.db_detective.model.DBDetectiveTableModel
 
 class DBDetective private constructor() {
 
@@ -34,11 +35,21 @@ class DBDetective private constructor() {
     }
 
     fun getColumnNamesForTable(tableName: String): List<String> {
-        return tableNameAndDbNameMap[tableName]?.let { dbName ->
-            dbNameAndInstanceMap[dbName]?.let { db ->
-                dbManager.getColumnNamesForTable(db, tableName)
-            }
+        return getDbFromTableName(tableName)?.let {
+            dbManager.getColumnNamesForTable(it, tableName)
         } ?: listOf()
+    }
+
+    fun getEntireDataOfTable(tableName: String): DBDetectiveTableModel {
+        return getDbFromTableName(tableName)?.let {
+            dbManager.getEntireDataForTable(it, tableName)
+        } ?: DBDetectiveTableModel(listOf())
+    }
+
+    private fun getDbFromTableName(tableName: String): SupportSQLiteDatabase? {
+        return tableNameAndDbNameMap[tableName]?.let { dbName ->
+            dbNameAndInstanceMap[dbName]
+        }
     }
 
     companion object {
@@ -75,6 +86,10 @@ class DBDetective private constructor() {
 
         fun getColumnNamesForTable(tableName: String): List<String> {
             return getInstanceInternal().getColumnNamesForTable(tableName)
+        }
+
+        fun getEntireDataOfTable(tableName: String): DBDetectiveTableModel {
+            return getInstanceInternal().getEntireDataOfTable(tableName)
         }
     }
 
