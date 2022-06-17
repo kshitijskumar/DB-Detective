@@ -3,10 +3,17 @@ package com.example.db_detective.core.main
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.db_detective.core.exceptions.NoDatabaseFoundForName
+import com.example.db_detective.core.manager.DBManager
+import com.example.db_detective.core.manager.IDBManager
 
 class DBDetective private constructor() {
 
     private val dbNameAndInstanceMap = mutableMapOf<String, SupportSQLiteDatabase>()
+    private val tableNameAndDbNameMap = mutableMapOf<String, String>()
+
+    private val dbManager: IDBManager by lazy { DBManager() }
+
 
     fun addDatabaseForLogging(dbName: String, db: SupportSQLiteDatabase) {
         dbNameAndInstanceMap[dbName] = db
@@ -16,25 +23,58 @@ class DBDetective private constructor() {
         return dbNameAndInstanceMap.keys.toList()
     }
 
+    fun getTableNamesListFromDatabase(dbName: String): List<String> {
+        return dbNameAndInstanceMap[dbName]?.let { db ->
+            dbManager.getAllTablesForDb(db).also {
+                it.forEach { table ->
+                    tableNameAndDbNameMap[table] = dbName
+                }
+            }
+        } ?: throw NoDatabaseFoundForName("No database attached with the name $dbName")
+    }
+
+    fun getColumnNamesForTable(tableName: String): List<String> {
+        return tableNameAndDbNameMap[tableName]?.let { dbName ->
+            dbNameAndInstanceMap[dbName]?.let { db ->
+                dbManager.getColumnNamesForTable(db, tableName)
+            }
+        } ?: listOf()
+    }
+
     companion object {
         @SuppressLint("StaticFieldLeak")
         @Volatile
         private var INSTANCE: DBDetective? = null
 
-        fun getInstance(): DBDetective {
+        private var getContextForUse: (() -> Context)? = null
+
+        fun getInstance(context: Context): DBDetective {
             return INSTANCE ?: synchronized(this) {
+                getContextForUse = { context.applicationContext }
                 DBDetective().also {
                     INSTANCE = it
                 }
             }
         }
 
-        fun addDatabaseForLogging(dbName: String, db: SupportSQLiteDatabase) {
-            getInstance().addDatabaseForLogging(dbName, db)
+        fun getInstanceInternal(): DBDetective {
+            return getInstance(getContextForUse!!.invoke())
+        }
+
+        fun addDatabaseForLogging(context: Context, dbName: String, db: SupportSQLiteDatabase) {
+            getInstance(context).addDatabaseForLogging(dbName, db)
         }
 
         fun getAllDatabaseNames(): List<String> {
-            return getInstance().getAllDatabaseNames()
+            return getInstanceInternal().getAllDatabaseNames()
+        }
+
+        fun getAllTablesFromDatabase(dbName: String): List<String> {
+            return getInstanceInternal().getTableNamesListFromDatabase(dbName)
+        }
+
+        fun getColumnNamesForTable(tableName: String): List<String> {
+            return getInstanceInternal().getColumnNamesForTable(tableName)
         }
     }
 

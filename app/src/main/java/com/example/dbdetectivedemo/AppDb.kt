@@ -28,7 +28,7 @@ abstract class AppDb: RoomDatabase() {
                     "app_db"
                 )
                     .build()
-                    .attachDBDetective()
+                    .attachDBDetective(context)
                     .also { INSTANCE = it }
             }
         }
