@@ -2,10 +2,13 @@ package com.example.db_detective.core.main
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.db_detective.core.exceptions.NoDatabaseFoundForName
 import com.example.db_detective.core.manager.DBManager
+import com.example.db_detective.core.manager.DBNotificationManager
 import com.example.db_detective.core.manager.IDBManager
+import com.example.db_detective.core.manager.IDBNotificationManager
 import com.example.db_detective.model.DBDetectiveTableModel
 
 class DBDetective private constructor() {
@@ -14,10 +17,22 @@ class DBDetective private constructor() {
     private val tableNameAndDbNameMap = mutableMapOf<String, String>()
 
     private val dbManager: IDBManager by lazy { DBManager() }
+    private val dbNotificationManager: IDBNotificationManager by lazy { DBNotificationManager() }
+
+    private var isAnyNotificationLiveAlready: Boolean = false
 
 
     fun addDatabaseForLogging(dbName: String, db: SupportSQLiteDatabase) {
         dbNameAndInstanceMap[dbName] = db
+        if (!isAnyNotificationLiveAlready) {
+            Log.d("NotifDebug", "in if")
+            getContextForUse?.let {
+                isAnyNotificationLiveAlready = true
+                Log.d("NotifDebug", "crossed null")
+
+                dbNotificationManager.createNotification(it.invoke())
+            }
+        }
     }
 
     fun getAllDatabaseNames(): List<String> {
@@ -63,7 +78,7 @@ class DBDetective private constructor() {
         @Volatile
         private var INSTANCE: DBDetective? = null
 
-        private var getContextForUse: (() -> Context)? = null
+        var getContextForUse: (() -> Context)? = null
 
         fun getInstance(context: Context): DBDetective {
             return INSTANCE ?: synchronized(this) {
@@ -100,6 +115,10 @@ class DBDetective private constructor() {
 
         fun runCustomQueryOnTable(tableName: String, customQuery: String): DBDetectiveTableModel {
             return getInstanceInternal().runCustomQueryOnTable(tableName, customQuery)
+        }
+
+        fun notificationRemoved() {
+            getInstanceInternal().isAnyNotificationLiveAlready = false
         }
     }
 

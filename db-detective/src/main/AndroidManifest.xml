@@ -2,4 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.db_detective">
 
+    <application>
+        <activity
+            android:name=".ui.activity.DBDetectiveMainActivity"
+            android:exported="false"
+            android:launchMode="singleInstance"/>
+
+        <receiver
+            android:name=".core.utils.RemoveNotificationBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="action_remove_notification"/>
+            </intent-filter>
+        </receiver>
+    </application>
+
 </manifest>

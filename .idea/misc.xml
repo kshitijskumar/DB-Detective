@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/SUDESH/.gradle/caches/transforms-3/ec8778f597115131b77fc5968136215d/transformed/core-1.7.0/res/drawable/notification_icon_background.xml" value="0.1" />
         <entry key="..\:/Users/SUDESH/AndroidStudioProjects/DbDetectivedemo/app/src/main/res/layout/activity_main.xml" value="0.23645833333333333" />
         <entry key="..\:/Users/SUDESH/AndroidStudioProjects/DbDetectivedemo/db-detective/src/main/res/layout/layout_table_row_item.xml" value="0.2222222222222222" />
       </map>

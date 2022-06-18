@@ -27,7 +27,7 @@ interface IDBManager {
             cursor.actionToPerform()
         } catch (e: Exception) {
             Log.d(DBDetectiveConstants.LOG_TAG, "error in getting tables: $e")
-            throw RecordFetchError("Something went wrong here")
+            throw RecordFetchError(e.message ?: "Something went wrong")
         } finally {
             if (cursor != null && !cursor.isClosed) {
                 cursor.close()
