@@ -10,7 +10,7 @@ import com.example.db_detective.core.manager.DBNotificationManager
 import com.example.db_detective.core.utils.RemoveNotificationBroadcastReceiver
 import com.example.db_detective.databinding.ActivityDbdetectiveMainBinding
 import com.example.db_detective.navigation.IDBDetectiveNavigation
-import com.example.db_detective.ui.TablesDataFragment
+import com.example.db_detective.ui.tableinfo.TablesDataFragment
 import com.example.db_detective.ui.alldbs.AllDatabasesFragment
 
 class DBDetectiveMainActivity : AppCompatActivity(), IDBDetectiveNavigation {

@@ -1,4 +1,4 @@
-package com.example.db_detective.ui
+package com.example.db_detective.ui.tableinfo
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -47,6 +47,27 @@ class TablesDataFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = tableAdapter
         }
+
+        binding.btnRefresh.setOnClickListener {
+            val userQuery = binding.etCustomQuery.text.toString()
+            val customQuery = userQuery.ifEmpty {
+                initAllData()
+                return@setOnClickListener
+            }
+            updateDataForCustomQuery(customQuery)
+        }
+
+        binding.btnRunQuery.setOnClickListener {
+            val userQuery = binding.etCustomQuery.text.toString()
+            if (userQuery.isNotEmpty()) {
+                updateDataForCustomQuery(userQuery)
+            }
+        }
+    }
+
+    private fun updateDataForCustomQuery(customQuery: String) {
+        val dataForCustomQuery = DBDetective.runCustomQueryOnTable(tableName, customQuery)
+        tableAdapter.submitList(dataForCustomQuery.toDBDetectiveRowModel().rowEntries)
     }
 
 
