@@ -7,7 +7,7 @@ fun DBDetectiveTableModel.toDBDetectiveRowModel(): DBDetectiveRowModel {
     val rowsList = mutableListOf<List<String>>()
     val columnNames = this.columns.map { it.columnName }
     rowsList.add(columnNames)
-    (0 until this.totaRowsCount).forEach { rowIndex ->
+    (0 until this.totalRowsCount).forEach { rowIndex ->
         val rowEntries = this.columns.map { it.columnAllValues[rowIndex] }
         rowsList.add(rowEntries)
     }

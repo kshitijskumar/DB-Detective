@@ -46,6 +46,12 @@ class DBDetective private constructor() {
         } ?: DBDetectiveTableModel(0, listOf())
     }
 
+    fun runCustomQueryOnTable(tableName: String, customQuery: String): DBDetectiveTableModel {
+        return getDbFromTableName(tableName)?.let {
+            dbManager.runCustomQueryOnTable(it, customQuery)
+        } ?: DBDetectiveTableModel(0, listOf())
+    }
+
     private fun getDbFromTableName(tableName: String): SupportSQLiteDatabase? {
         return tableNameAndDbNameMap[tableName]?.let { dbName ->
             dbNameAndInstanceMap[dbName]
@@ -90,6 +96,10 @@ class DBDetective private constructor() {
 
         fun getEntireDataOfTable(tableName: String): DBDetectiveTableModel {
             return getInstanceInternal().getEntireDataOfTable(tableName)
+        }
+
+        fun runCustomQueryOnTable(tableName: String, customQuery: String): DBDetectiveTableModel {
+            return getInstanceInternal().runCustomQueryOnTable(tableName, customQuery)
         }
     }
 

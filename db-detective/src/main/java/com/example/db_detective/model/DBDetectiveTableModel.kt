@@ -1,7 +1,7 @@
 package com.example.db_detective.model
 
 data class DBDetectiveTableModel(
-    val totaRowsCount: Int,
+    val totalRowsCount: Int,
     val columns: List<DBDetectiveColumnModel>
 )
 

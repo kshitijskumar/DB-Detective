@@ -10,9 +10,7 @@ import com.example.db_detective.core.utils.DBDetectiveConstants.LOG_TAG
 import com.example.db_detective.ui.adapter.TableLayoutAdapter
 import com.example.dbdetectivedemo.databinding.ActivityMainBinding
 import com.example.dbdetectivedemo.testdb.TestEntity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -57,6 +55,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         tableAdapter.submitList(data.toDBDetectiveRowModel().rowEntries)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            delay(2000)
+            val data2 = DBDetective.runCustomQueryOnTable("test_table", "SELECT name FROM test_table WHERE id >= 15")
+            withContext(Dispatchers.Main) {
+                Log.d(LOG_TAG, "data for test_table: $data2")
+                tableAdapter.submitList(data2.toDBDetectiveRowModel().rowEntries)
+            }
+        }
 
     }
 }

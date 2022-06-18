@@ -15,6 +15,8 @@ interface IDBManager {
 
     fun getEntireDataForTable(db: SupportSQLiteDatabase, tableName: String): DBDetectiveTableModel
 
+    fun runCustomQueryOnTable(db: SupportSQLiteDatabase, customQuery: String): DBDetectiveTableModel
+
     fun handleCursorActionSafely(
         createCursor: () -> Cursor,
         actionToPerform: Cursor.() -> Unit

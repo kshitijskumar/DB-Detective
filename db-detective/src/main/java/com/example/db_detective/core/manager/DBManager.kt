@@ -46,26 +46,34 @@ class DBManager : IDBManager {
     }
 
     override fun getEntireDataForTable(db: SupportSQLiteDatabase, tableName: String): DBDetectiveTableModel {
+        return runCustomQueryOnTable(db, "SELECT * FROM $tableName")
+    }
+
+    override fun runCustomQueryOnTable(
+        db: SupportSQLiteDatabase,
+        customQuery: String
+    ): DBDetectiveTableModel {
         val tempMap = mutableMapOf<String, MutableList<String>>()
         var totalRowsCount = 0
+
         handleCursorActionSafely(
-            createCursor = { db.query("SELECT * FROM $tableName") },
+            createCursor = { db.query(customQuery) },
             actionToPerform = {
                 if (moveToFirst()) {
-                    while (!isAfterLast) {
-                        totalRowsCount = this.count
-                        (0 until this.columnCount).forEach {
+                    totalRowsCount = this.count
+                    while(!isAfterLast) {
+                        (0 until columnCount).forEach {
                             val existingData = tempMap[this.getColumnName(it)] ?: mutableListOf()
-                            tempMap[this.getColumnName(it)] =
-                                existingData.also { list -> list.add(getString(it)) }
+                            tempMap[getColumnName(it)] = existingData.also { list -> list.add(getString(it)) }
                         }
                         moveToNext()
                     }
                 }
             }
         )
+
         return DBDetectiveTableModel(
-            totaRowsCount = totalRowsCount,
+            totalRowsCount = totalRowsCount,
             columns = tempMap.entries.map {
                 DBDetectiveColumnModel(
                     columnName = it.key,
