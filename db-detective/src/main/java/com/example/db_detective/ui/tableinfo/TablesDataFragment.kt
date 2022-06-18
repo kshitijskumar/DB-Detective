@@ -7,8 +7,9 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.db_detective.core.main.DBDetective
-import com.example.db_detective.core.mappers.toDBDetectiveRowModel
+import com.example.db_detective.core.manager.DBDetectiveInteractionManager
+import com.example.db_detective.core.manager.IDBDetectiveInteractionManager
+import com.example.db_detective.core.utils.handleManagerSuccessOrShowToast
 import com.example.db_detective.databinding.FragmentTablesDataBinding
 import com.example.db_detective.ui.adapter.TableLayoutAdapter
 
@@ -21,11 +22,13 @@ class TablesDataFragment : Fragment() {
 
     private val tableName: String by lazy { arguments?.getString(ARG_TABLE_NAME) ?: "" }
 
+    private val dbInteractionManager: IDBDetectiveInteractionManager = DBDetectiveInteractionManager()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentTablesDataBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -38,8 +41,12 @@ class TablesDataFragment : Fragment() {
     }
 
     private fun initAllData() {
-        val allDataFromTable = DBDetective.getEntireDataOfTable(tableName)
-        tableAdapter.submitList(allDataFromTable.toDBDetectiveRowModel().rowEntries)
+        val allDataFromTable = dbInteractionManager.getEntireDataOfTable(tableName)
+        handleManagerSuccessOrShowToast(
+            result = allDataFromTable
+        ) {
+            tableAdapter.submitList(it.rowEntries)
+        }
     }
 
     private fun initView() {
@@ -66,8 +73,12 @@ class TablesDataFragment : Fragment() {
     }
 
     private fun updateDataForCustomQuery(customQuery: String) {
-        val dataForCustomQuery = DBDetective.runCustomQueryOnTable(tableName, customQuery)
-        tableAdapter.submitList(dataForCustomQuery.toDBDetectiveRowModel().rowEntries)
+        val dataForCustomQuery = dbInteractionManager.runCustomQueryOnTable(tableName, customQuery)
+        handleManagerSuccessOrShowToast(
+            dataForCustomQuery
+        ) {
+            tableAdapter.submitList(it.rowEntries)
+        }
     }
 
 
@@ -75,6 +86,7 @@ class TablesDataFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 
     companion object {
         const val FRAGMENT_TAG = "TablesDataFragment"

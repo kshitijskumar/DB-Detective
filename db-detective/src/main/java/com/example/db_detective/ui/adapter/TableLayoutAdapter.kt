@@ -56,6 +56,7 @@ class TableLayoutAdapter : ListAdapter<List<String>, TableLayoutViewHolder>(diff
                 gravity = Gravity.CENTER
                 textSize = 14f
                 setPadding(0, 8, 0, 8)
+                setTextIsSelectable(true)
             }
             binding.root.addView(tv)
             setStartAndEndMargin(tv, 20)

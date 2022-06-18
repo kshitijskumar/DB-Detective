@@ -2,13 +2,14 @@ package com.example.db_detective.ui.alldbs
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.db_detective.core.main.DBDetective
+import com.example.db_detective.core.manager.DBDetectiveInteractionManager
+import com.example.db_detective.core.manager.IDBDetectiveInteractionManager
+import com.example.db_detective.core.utils.handleManagerSuccessOrShowToast
 import com.example.db_detective.databinding.FragmentAllDatabasesBinding
 import com.example.db_detective.navigation.IDBDetectiveNavigation
 
@@ -18,6 +19,7 @@ class AllDatabasesFragment : Fragment() {
     private val binding: FragmentAllDatabasesBinding get() = _binding!!
 
     private lateinit var navHelper: IDBDetectiveNavigation
+    private val dbInteractionManager: IDBDetectiveInteractionManager = DBDetectiveInteractionManager()
 
     private val allDbsAdapter: AllDatabasesAdapter by lazy {
         AllDatabasesAdapter {
@@ -56,12 +58,16 @@ class AllDatabasesFragment : Fragment() {
     }
 
     private fun setupDatabasesName() {
-        val allDbs = DBDetective.getAllDatabaseNames()
+        val allDbs = dbInteractionManager.getAllDatabaseNames()
         val dbAndTableModelList = mutableListOf<SingleDatabaseModel>()
         allDbs.forEach { dbName ->
-            val tablesForDb = DBDetective.getAllTablesFromDatabase(dbName)
-            val singleDbModels = tablesForDb.map { SingleDatabaseModel(dbName, it) }
-            dbAndTableModelList.addAll(singleDbModels)
+            val tablesForDb = dbInteractionManager.getTableNamesListFromDatabase(dbName)
+            handleManagerSuccessOrShowToast(
+                tablesForDb
+            ) { tables ->
+                val singleDbModels = tables.map { SingleDatabaseModel(dbName, it) }
+                dbAndTableModelList.addAll(singleDbModels)
+            }
         }
         allDbsAdapter.submitList(dbAndTableModelList)
     }
