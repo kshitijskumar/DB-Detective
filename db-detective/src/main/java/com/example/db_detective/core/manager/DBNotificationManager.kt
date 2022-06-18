@@ -52,9 +52,7 @@ class DBNotificationManager : IDBNotificationManager {
     }
 
     private fun setNotificationInteractions(context: Context): NotificationCompat.Builder {
-        val tapIntent = Intent(context, DBDetectiveMainActivity::class.java).apply {
-//            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
+        val tapIntent = Intent(context, DBDetectiveMainActivity::class.java)
 
         val tapPendingIntent =
             PendingIntent.getActivity(context, 0, tapIntent, 0)

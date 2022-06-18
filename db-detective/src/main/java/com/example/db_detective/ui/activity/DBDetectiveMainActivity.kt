@@ -1,17 +1,19 @@
 package com.example.db_detective.ui.activity
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.example.db_detective.R
 import com.example.db_detective.core.main.DBDetective
 import com.example.db_detective.core.manager.DBNotificationManager
-import com.example.db_detective.core.utils.DBDetectiveConstants
 import com.example.db_detective.core.utils.RemoveNotificationBroadcastReceiver
 import com.example.db_detective.databinding.ActivityDbdetectiveMainBinding
+import com.example.db_detective.navigation.IDBDetectiveNavigation
+import com.example.db_detective.ui.TablesDataFragment
+import com.example.db_detective.ui.alldbs.AllDatabasesFragment
 
-class DBDetectiveMainActivity : AppCompatActivity() {
+class DBDetectiveMainActivity : AppCompatActivity(), IDBDetectiveNavigation {
 
     private lateinit var binding: ActivityDbdetectiveMainBinding
 
@@ -21,11 +23,15 @@ class DBDetectiveMainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         if (!checkIfInspectionStillOnAndHandleCase()) {
-            Log.d(
-                DBDetectiveConstants.LOG_TAG,
-                "columns for test_table: ${DBDetective.getColumnNamesForTable("test_table")}"
-            )
+            setupFragment()
         }
+    }
+
+    private fun setupFragment() {
+        val fragment = AllDatabasesFragment()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.frame_layout, fragment, AllDatabasesFragment.FRAGMENT_TAG)
+            .commit()
     }
 
     private fun checkIfInspectionStillOnAndHandleCase(): Boolean {
@@ -48,5 +54,13 @@ class DBDetectiveMainActivity : AppCompatActivity() {
         }
 
         return DBDetective.getContextForUse == null
+    }
+
+    override fun navigateToTablesDataFragment(tableName: String) {
+        val tablesDataFragment = TablesDataFragment.createInstance(tableName)
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.frame_layout, tablesDataFragment, TablesDataFragment.FRAGMENT_TAG)
+            .addToBackStack(null)
+            .commit()
     }
 }

@@ -55,6 +55,7 @@ class TableLayoutAdapter : ListAdapter<List<String>, TableLayoutViewHolder>(diff
                 width = 200
                 gravity = Gravity.CENTER
                 textSize = 14f
+                setPadding(0, 8, 0, 8)
             }
             binding.root.addView(tv)
             setStartAndEndMargin(tv, 20)
@@ -69,10 +70,11 @@ class TableLayoutAdapter : ListAdapter<List<String>, TableLayoutViewHolder>(diff
     inner class TableLayoutColumnNameViewHolder(private val binding: LayoutTableRowItemBinding): TableLayoutViewHolder(binding.root) {
         override fun setupSingleEntryViewInLayout(): TextView {
             val tv =  TextView(binding.root.context).apply {
-                setTextColor(Color.RED)
+                setTextColor(Color.BLACK)
                 width = 200
                 gravity = Gravity.CENTER
                 textSize = 18f
+                setPadding(0, 12, 0, 12)
             }
             binding.root.addView(tv)
             setStartAndEndMargin(tv, 20)
