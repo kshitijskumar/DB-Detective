@@ -43,7 +43,7 @@ class DBDetective private constructor() {
     fun getEntireDataOfTable(tableName: String): DBDetectiveTableModel {
         return getDbFromTableName(tableName)?.let {
             dbManager.getEntireDataForTable(it, tableName)
-        } ?: DBDetectiveTableModel(listOf())
+        } ?: DBDetectiveTableModel(0, listOf())
     }
 
     private fun getDbFromTableName(tableName: String): SupportSQLiteDatabase? {

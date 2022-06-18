@@ -8,5 +8,8 @@ data class TestEntity(
     @PrimaryKey(autoGenerate = false)
     val id: Long,
     val name: String,
-    val description: String
+    val description: String,
+    val address: String,
+    val dob: String,
+    val status: String
 )

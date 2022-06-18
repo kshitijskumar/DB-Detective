@@ -47,14 +47,17 @@ class DBManager : IDBManager {
 
     override fun getEntireDataForTable(db: SupportSQLiteDatabase, tableName: String): DBDetectiveTableModel {
         val tempMap = mutableMapOf<String, MutableList<String>>()
+        var totalRowsCount = 0
         handleCursorActionSafely(
             createCursor = { db.query("SELECT * FROM $tableName") },
             actionToPerform = {
                 if (moveToFirst()) {
                     while (!isAfterLast) {
+                        totalRowsCount = this.count
                         (0 until this.columnCount).forEach {
                             val existingData = tempMap[this.getColumnName(it)] ?: mutableListOf()
-                            tempMap[this.getColumnName(it)] = existingData.also { list -> list.add(getString(it)) }
+                            tempMap[this.getColumnName(it)] =
+                                existingData.also { list -> list.add(getString(it)) }
                         }
                         moveToNext()
                     }
@@ -62,7 +65,13 @@ class DBManager : IDBManager {
             }
         )
         return DBDetectiveTableModel(
-            tempMap.entries.map { DBDetectiveColumnModel(it.key, it.value) }
+            totaRowsCount = totalRowsCount,
+            columns = tempMap.entries.map {
+                DBDetectiveColumnModel(
+                    columnName = it.key,
+                    columnAllValues = it.value
+                )
+            }
         )
     }
 }
